@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
-import Container from './Container';
+import Banner from './Banner';
 import Navbar from './navbar';
 import { Component } from 'react';
-// import Pokemon from './Pokemon';
+import PokemonContainer from './PokemonContainer';
 
 class App extends Component {
   constructor(props) {
@@ -14,48 +14,50 @@ class App extends Component {
         forms : 0,
         id : 0,
         types : ''
-      }
-
+      }, 
+      queryInput : ''
     }
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
   }
   
-  handleChange(e) {
-    this.setState({ pokemonInfo : {
-      name: e.target.value
-    }}
-    )
+  handleChange = (e) => {
+    this.setState({ queryInput : e.target.value })
   }
   
   //on submit this will send the fetch req about the pokemon to the API
-  handleSubmit(e) {
-
-    console.log(this.state.pokemonInfo)
-    fetch(`https://pokeapi.co/api/v2/pokemon/${this.state.pokemonInfo.name}`)
+  handleSubmit = (e) => {
+    e.preventDefault(); 
+    const apiQuery = 'https://pokeapi.co/api/v2/pokemon/';
+    fetch(`${apiQuery}${this.state.queryInput}`)
     .then(res => res.json())
     .then(data => {
-      console.log(data)
+      let typesArray;
+      const types = data.types;
+      // if there's only one type then just set types to that one type
+      // if there are more then set it to an array of types
+      const oneType = data.types[0].type.name;
+      if (types.length > 1) {
+        typesArray = types.map(el => el.type.name);
+      }
       this.setState({
         pokemonInfo : {
           name : data.species.name,
           forms : data.forms.length,
           id : data.id,
-          types : data.types.name,
+          types : types.length > 1 ? typesArray : oneType,
         }
       })
+      console.log(this.state.pokemonInfo)
     })
     .catch(() => console.log(`No such pokemon`))
-    console.log(this.state.pokemonInfo)
-    e.preventDefault(); 
   }
     
 
 
   render() {
     return (
+      // clean this all up and put it in its own component
       <div className="App">
-        <Container info={this.state}/>
+        <Banner info={this.state}/>
         <Navbar />
         <br/>
         <form onSubmit={this.handleSubmit}>
@@ -64,6 +66,8 @@ class App extends Component {
         </label>
         <input type="submit" value="Submit" />
       </form>
+      <br />
+      <PokemonContainer pokemonSearch={this.state.pokemonInfo}/>
       </div>
     );
   }
