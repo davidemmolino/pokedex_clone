@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import SearchResult from './SearchResult';
+// import SearchResult from './SearchResult';
 
 export default function Pokemon(props) {
-    // console.log(props)
-    // map props object and for every element populate the card
+    let results = [props];
+    let cards = [];
+    console.log('results: ',results)
+    useEffect(() => {
+        cards.push(results.map(el => {
+            return <SearchResult name={el.name}/>
+        }))
+    }, [props.name])
+
     return (
         <div>
-            Hello
+            {cards}
         </div>
     )
 }

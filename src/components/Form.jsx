@@ -3,6 +3,7 @@ import PokemonContainer from './PokemonContainer';
 
 
 export default function Form() {
+  
   const [state, setState ] = useState({
     pokemonInfo : {
       name : '',
@@ -21,7 +22,6 @@ export default function Form() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const apiQuery = 'https://pokeapi.co/api/v2/pokemon/';
-    console.log(state.queryInput)
     fetch(`${apiQuery}${state.queryInput}`)
     .then(res => res.json())
     .then(data => {
@@ -37,7 +37,7 @@ export default function Form() {
     })
     .catch(() => console.log(`No such pokemon`))
   }
-  console.log(state)
+
   return (
     <div>
         <form onSubmit={handleSubmit} >
